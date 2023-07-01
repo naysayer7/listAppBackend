@@ -24,4 +24,4 @@ Route::post('/add', [ItemsController::class, 'store']);
 Route::post('/edit', [ItemsController::class, 'update']);
 
 // Remove an item
-Route::post('/remove', [ItemsController::class, 'remove']);
+Route::post('/remove', [ItemsController::class, 'destroy']);
