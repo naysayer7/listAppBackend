@@ -1,0 +1,21 @@
+body {
+    padding: 10px;
+}
+
+.list {
+    margin-top: 10px;
+    width: 45%;
+}
+
+.remove-btn,
+.cancel-btn {
+    margin-left: 10px;
+}
+
+.edit-input {
+    width: 100%;
+}
+
+.element-id {
+    text-align: end;
+}
