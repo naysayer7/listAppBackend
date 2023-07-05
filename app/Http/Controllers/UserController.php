@@ -2,29 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginUserRequest;
+use App\Http\Requests\RegisterUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    public function login(Request $request)
+    public function login(LoginUserRequest $request)
     {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
-        ]);
+        $credentials = $request->validated();
 
         if (!Auth::attempt($credentials)) {
-            return back()->withErrors(['form' => 'Неверные логин или пароль.'])->onlyInput('form', 'email');
+            return back()->withErrors(['form' => 'Неверный логин или пароль'])->onlyInput('form', 'email');
         }
 
         $request->session()->regenerate();
-
         return redirect()->intended();
     }
 
-    public function register(Request $request)
+    public function register(RegisterUserRequest $request)
     {
         $credentials = $request->validate([
             'email' => 'required|email|unique:users',
@@ -32,8 +30,7 @@ class UserController extends Controller
             'password' => 'required|string|min:6'
         ]);
 
-        $user = User::create($credentials);
-
+        User::create($credentials);
         Auth::attempt($credentials);
 
         return redirect()->intended();

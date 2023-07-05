@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DestroyItemRequest;
+use App\Http\Requests\StoreItemRequest;
+use App\Http\Requests\UpdateItemRequest;
 use App\Models\Item;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class ItemsController extends Controller
@@ -38,11 +40,9 @@ class ItemsController extends Controller
     /**
      * Save a new item.
      */
-    public function store(Request $request)
+    public function store(StoreItemRequest $request)
     {
-        $validator = $request->validate([
-            'body' => 'required'
-        ]);
+        $validator = $request->validated();
         Item::create(['body' => $request->body, 'user_id' => $request->user()->id]);
         return [];
     }
@@ -50,21 +50,12 @@ class ItemsController extends Controller
     /**
      * Update the specified item from storage.
      */
-    public function update(Request $request)
+    public function update(UpdateItemRequest $request)
     {
-        $validator = $request->validate([
-            'id' => ['required', 'exists:items,id'],
-            'newBody' => ['required']
-        ]);
+        $validator = $request->validated();
 
         $item = Item::find($request->id);
-
-        if (!Gate::allows('edit-item', $item)) {
-            abort(403);
-        }
-
         $item->body = $request->newBody;
-
         $item->save();
 
         return [];
@@ -73,18 +64,11 @@ class ItemsController extends Controller
     /**
      * Remove the specified item from storage.
      */
-    public function destroy(Request $request)
+    public function destroy(DestroyItemRequest $request)
     {
-        $validator = $request->validate([
-            'id' => ['required', 'exists:items,id'],
-        ]);
+        $validator = $request->validated();
 
         $item = Item::find($request->id);
-
-        if (!Gate::allows('remove-item', $item)) {
-            abort(403);
-        }
-
         $item->delete();
 
         return [];
