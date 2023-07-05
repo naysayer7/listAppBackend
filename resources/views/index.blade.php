@@ -44,7 +44,7 @@
         <form class="row g-2 text-form" novalidate>
             <div class="col">
                 <input type="text" class="form-control text-input" name="body" required>
-                <div class="invalid-feedback">Введите непустую строку</div>
+                <div class="invalid-feedback"></div>
             </div>
             <div class="col-md-3">
                 <button type="submit" class="btn btn-primary add-btn w-100">Добавить</button>
@@ -62,7 +62,7 @@
                     </div>
                     <form class="edit-form" hidden>
                         <input class="form-control edit-input w-100" type="text">
-                        <div class="invalid-feedback">Введите непустую строку</div>
+                        <div class="invalid-feedback"></div>
                         <hr>
                         <button class="btn btn-success confirm-btn" type="submit">Ок</button>
                         <button class="btn btn-danger cancel-btn ms-2">Отмена</button>

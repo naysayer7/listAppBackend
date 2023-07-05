@@ -6,20 +6,22 @@ const sortForm = document.querySelector(".sort-form");
 textForm.addEventListener("submit", function (e) {
   e.preventDefault();
 
+  const invalidFeedback = this.querySelector(".invalid-feedback");
   const textInput = this.querySelector(".text-input");
   const inputValue = textInput.value.trim();
 
   // Очищаем поле ввода
   textInput.value = "";
 
-  // Валидация текста
-  if (!inputValue) {
-    textInput.classList.add("is-invalid");
-    return;
-  }
-
-  post("/items/add", { body: inputValue }).then(function () {
-    window.location.reload();
+  post("/items/add", { body: inputValue }).then(function (res) {
+    return res.json();
+  }).then(function (data) {
+    if (!data.errors) {
+      window.location.reload();
+    } else {
+      textInput.classList.add("is-invalid");
+      invalidFeedback.textContent = data.errors.body;
+    }
   });
 });
 
@@ -73,17 +75,20 @@ function onConfirmClick(target, e) {
 
   const elementNode = target.closest("li");
   const editForm = target.closest(".edit-form");
+  const invalidFeedback = editForm.querySelector(".invalid-feedback");
   const editInput = editForm.querySelector("input");
   const editValue = editInput.value.trim();
 
-  // Валидация отредактированного текста
-  if (!editValue) {
+  post("/items/edit", { id: elementNode.id, newBody: editInput.value }).then(function (res) {
+    return res.json();
+  }).then(function (data) {
+    if (!data.errors || data.errors.id) {
+      window.location.reload();
+      return;
+    }
     editInput.classList.add("is-invalid");
-    return;
-  }
+    invalidFeedback.textContent = data.errors.newBody;
 
-  post("/items/edit", { id: elementNode.id, newBody: editValue }).then(function () {
-    window.location.reload();
   });
 }
 
@@ -139,7 +144,8 @@ function post(url, data) {
     method: "POST",
     headers: {
       "X-CSRF-TOKEN": CSRF_TOKEN,
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      "Accept": "application/json"
     },
     body: JSON.stringify(data)
   });

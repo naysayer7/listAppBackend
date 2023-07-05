@@ -43,9 +43,8 @@ class ItemsController extends Controller
         $validator = $request->validate([
             'body' => 'required'
         ]);
-
         Item::create(['body' => $request->body, 'user_id' => $request->user()->id]);
-        return;
+        return [];
     }
 
     /**
@@ -68,7 +67,7 @@ class ItemsController extends Controller
 
         $item->save();
 
-        return;
+        return [];
     }
 
     /**
@@ -88,6 +87,6 @@ class ItemsController extends Controller
 
         $item->delete();
 
-        return;
+        return [];
     }
 }
