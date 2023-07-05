@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ItemsController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,13 +16,31 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Main page
-Route::get('/', [ItemsController::class, 'index']);
+Route::middleware('auth:sanctum')->get('/', [ItemsController::class, 'index']);
 
-// Add an item
-Route::post('/add', [ItemsController::class, 'store']);
 
-// Edit an item
-Route::post('/edit', [ItemsController::class, 'update']);
 
-// Remove an item
-Route::post('/remove', [ItemsController::class, 'destroy']);
+Route::get('/login', function () {
+    return view('login');
+})->name('login');
+
+Route::post('/login', [UserController::class, 'login']);
+
+Route::get('/register', function () {
+    return view('register');
+});
+
+Route::post('/register', [UserController::class, 'register']);
+
+Route::get('/logout', [UserController::class, 'logout']);
+
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    // Add an item
+    Route::post('/items/add', [ItemsController::class, 'store']);
+
+    // Edit an item
+    Route::post('/items/edit', [ItemsController::class, 'update']);
+
+    // Remove an item
+    Route::post('/items/remove', [ItemsController::class, 'destroy']);
+});

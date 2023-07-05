@@ -14,62 +14,58 @@
 <body>
     <header>
     </header>
-    <main>
-        <form class="p-5 sort-form">
+    <main class="p-2">
+        <div class="text-end">
+            <a class="btn btn-outline-secondary logout-btn" href="/logout">Выйти</a>
+        </div>
+        <form class="sort-form">
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="sortRadio" id="incIdRadio" sort="incId"
-                    @if ($sortType === 'incId') checked @endif>
-                <label class="form-check-label" for="incIdRadio">
-                    по возрастанию номера
+                <input class="form-check-input" type="radio" name="sortRadio" id="idSortRadio" sort-field="id"
+                    @if ($sortField === 'id') checked @endif>
+                <label class="form-check-label" for="idSortRadio">
+                    по номеру
                 </label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="sortRadio" id="decIdRadio" sort="decId"
-                    @if ($sortType === 'decId') checked @endif>
-                <label class="form-check-label" for="decIdRadio">
-                    по убыванию номера
+                <input class="form-check-input" type="radio" name="sortRadio" id="bodySortRadio" sort-field="body"
+                    @if ($sortField === 'body') checked @endif>
+                <label class="form-check-label" for="bodySortRadio">
+                    по алфавиту
                 </label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="sortRadio" id="alphabetRadio" sort="alphabet"
-                    @if ($sortType === 'alphabet') checked @endif>
-                <label class="form-check-label" for="alphabetRadio">
-                    в алфавитном порядке
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="sortRadio" id="invAlphabetRadio" sort="invAlphabet"
-                    @if ($sortType === 'invAlphabet') checked @endif>
-                <label class="form-check-label" for="invAlphabetRadio">
-                    в обратном алфавитном порядке
+                <input class="form-check-input" type="checkbox" name="sortCheck" id="orderCheckbox"
+                    @if ($sortOrder === 'descending') checked @endif>
+                <label class="form-check-label" for="orderCheckbox">
+                    обратный порядок
                 </label>
             </div>
         </form>
-        <form class="row g-2 text-form" novalidate action="/" method="POST">
-            <div class="col-md-4">
+        <form class="row g-2 text-form" novalidate>
+            <div class="col">
                 <input type="text" class="form-control text-input" name="body" required>
                 <div class="invalid-feedback">Введите непустую строку</div>
             </div>
-            <div class="col-md-4">
-                <button type="submit" class="btn btn-primary add-btn">Добавить</button>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary add-btn w-100">Добавить</button>
             </div>
         </form>
-        <ul class="list list-group">
+        <ul class="mt-2 list-group">
             @foreach ($items as $item)
                 <li class="list-group-item" id="{{ $item->id }}">
-                    <div class="element-id">{{ $item->id }}</div>
+                    <div class="text-end">{{ $item->id }}</div>
                     <div class="element-container">
                         <p>{{ $item->body }}</p>
                         <hr>
                         <button class="btn btn-secondary edit-btn">Редактировать</button>
-                        <button class="btn-close remove-btn"></button>
+                        <button class="btn-close remove-btn ms-2"></button>
                     </div>
-                    <form class="edit-form" hidden="">
-                        <input class="form-control edit-input" type="text">
+                    <form class="edit-form" hidden>
+                        <input class="form-control edit-input w-100" type="text">
                         <div class="invalid-feedback">Введите непустую строку</div>
                         <hr>
                         <button class="btn btn-success confirm-btn" type="submit">Ок</button>
-                        <button class="btn btn-danger cancel-btn">Отмена</button>
+                        <button class="btn btn-danger cancel-btn ms-2">Отмена</button>
                     </form>
                 </li>
             @endforeach

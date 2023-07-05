@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class ItemsController extends Controller
 {
@@ -12,25 +14,25 @@ class ItemsController extends Controller
      */
     public function index(Request $request)
     {
-        $items = [];
-        switch ($request->sortType) {
-            case 'incId':
-                $items = Item::orderBy('id')->get();
-                break;
-            case 'decId':
-                $items = Item::orderByDesc('id')->get();
-                break;
-            case 'alphabet':
-                $items = Item::orderBy('body')->get();
-                break;
-            case 'invAlphabet':
-                $items = Item::orderByDesc('body')->get();
-                break;
-            default:
-                $items = Item::all();
-                break;
-        }
-        return view('index', ['items' => $items, 'sortType' => $request->sortType]);
+        $validator = $request->validate([
+            'sortField' => Rule::in(['id', 'body']),
+            'sortOrder' => Rule::in(['ascending', 'descending'])
+        ]);
+
+        $items = Item::where('user_id', $request->user()->id);
+
+        if ($request->sortField)
+            if ($request->sortOrder == 'descending') {
+                $items = $items->orderByDesc($request->sortField);
+            } else {
+                $items = $items->orderBy($request->sortField);
+            }
+
+        return view('index', [
+            'items' => $items->get(),
+            'sortOrder' => $request->sortOrder,
+            'sortField' => $request->sortField
+        ]);
     }
 
     /**
@@ -38,14 +40,11 @@ class ItemsController extends Controller
      */
     public function store(Request $request)
     {
-        if (!$request->body) {
-            return abort(400);
-        }
+        $validator = $request->validate([
+            'body' => 'required'
+        ]);
 
-        $item = new Item();
-        $item->body = $request->body;
-        $item->save();
-
+        Item::create(['body' => $request->body, 'user_id' => $request->user()->id]);
         return;
     }
 
@@ -54,14 +53,15 @@ class ItemsController extends Controller
      */
     public function update(Request $request)
     {
-        if (!$request->id || !$request->newBody) {
-            return abort(400);
-        }
+        $validator = $request->validate([
+            'id' => ['required', 'exists:items,id'],
+            'newBody' => ['required']
+        ]);
 
         $item = Item::find($request->id);
 
-        if (!$item) {
-            return abort(400);
+        if (!Gate::allows('edit-item', $item)) {
+            abort(403);
         }
 
         $item->body = $request->newBody;
@@ -76,14 +76,14 @@ class ItemsController extends Controller
      */
     public function destroy(Request $request)
     {
-        if (!$request->id) {
-            return abort(400);
-        }
+        $validator = $request->validate([
+            'id' => ['required', 'exists:items,id'],
+        ]);
 
         $item = Item::find($request->id);
 
-        if (!$item) {
-            return abort(400);
+        if (!Gate::allows('remove-item', $item)) {
+            abort(403);
         }
 
         $item->delete();

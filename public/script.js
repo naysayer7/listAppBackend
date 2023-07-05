@@ -18,13 +18,13 @@ textForm.addEventListener("submit", function (e) {
     return;
   }
 
-  post("/add", { body: inputValue }).then(function () {
+  post("/items/add", { body: inputValue }).then(function () {
     window.location.reload();
   });
 });
 
 sortForm.addEventListener("change", function (e) {
-  window.location.href = `/?sortType=${getSelectedSort()}`;
+  window.location.href = `/?sortField=${getSortField()}&sortOrder=${getSortOrder()}`;
 });
 
 document.addEventListener("click", function (e) {
@@ -82,7 +82,7 @@ function onConfirmClick(target, e) {
     return;
   }
 
-  post("/edit", { id: elementNode.id, newBody: editValue }).then(function () {
+  post("/items/edit", { id: elementNode.id, newBody: editValue }).then(function () {
     window.location.reload();
   });
 }
@@ -105,14 +105,9 @@ function onCancelClick(target, e) {
 
 function onRemoveClick(target, e) {
   const elementNode = target.closest("li");
-  post("/remove", { id: elementNode.id }).then(function () {
+  post("/items/remove", { id: elementNode.id }).then(function () {
     window.location.reload();
   });
-}
-
-function addElement(element) {
-  list.push(element);
-  sortList();
 }
 
 function getElementById(id) {
@@ -121,16 +116,22 @@ function getElementById(id) {
   });
 }
 
-function getSelectedSort() {
+function getSortField() {
   const form = document.querySelector(".sort-form");
   const radios = form.querySelectorAll("input");
 
   // Находим выбранную сортировку
   for (const radio of radios) {
     if (radio.checked) {
-      return radio.getAttribute("sort");
+      return radio.getAttribute("sort-field");
     }
   }
+}
+
+function getSortOrder() {
+  if (sortForm.querySelector("#orderCheckbox").checked)
+    return "descending";
+  return "ascending";
 }
 
 function post(url, data) {
