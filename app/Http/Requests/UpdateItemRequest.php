@@ -15,7 +15,7 @@ class UpdateItemRequest extends FormRequest
     {
         $itemId = $this->id;
 
-        return Gate::allows('remove-item', Item::findOrFail($itemId));
+        return Gate::allows('edit-item', Item::findOrFail($itemId));
     }
 
     /**
