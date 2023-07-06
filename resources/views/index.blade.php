@@ -35,7 +35,7 @@
             </div>
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="sortCheck" id="orderCheckbox"
-                    @if ($sortOrder === 'descending') checked @endif>
+                    @if ($sortOrder === 'desc') checked @endif>
                 <label class="form-check-label" for="orderCheckbox">
                     обратный порядок
                 </label>

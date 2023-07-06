@@ -18,17 +18,13 @@ class ItemsController extends Controller
     {
         $validator = $request->validate([
             'sortField' => Rule::in(['id', 'body']),
-            'sortOrder' => Rule::in(['ascending', 'descending'])
+            'sortOrder' => Rule::in(['asc', 'desc'])
         ]);
 
         $items = Item::where('user_id', $request->user()->id);
 
         if ($request->sortField)
-            if ($request->sortOrder == 'descending') {
-                $items = $items->orderByDesc($request->sortField);
-            } else {
-                $items = $items->orderBy($request->sortField);
-            }
+            $items = $items->orderBy($request->sortField, $request->sortOrder ? $request->sortOrder : 'asc');
 
         return view('index', [
             'items' => $items->get(),

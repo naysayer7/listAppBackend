@@ -135,8 +135,8 @@ function getSortField() {
 
 function getSortOrder() {
   if (sortForm.querySelector("#orderCheckbox").checked)
-    return "descending";
-  return "ascending";
+    return "desc";
+  return "asc";
 }
 
 function post(url, data) {
