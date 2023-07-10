@@ -7,6 +7,8 @@ use App\Http\Requests\RegisterUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\File;
 
 class UserController extends Controller
 {
@@ -44,5 +46,54 @@ class UserController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+
+    public function storeAvatar(Request $request)
+    {
+        $validator = $request->validate([
+            'image' => ['required', File::image()]
+        ]);
+
+        $avatarFileName = $request->user()->id . '-avatar.' . $request->image->extension();
+        $file = $request->image->move(public_path('images'), $avatarFileName);
+
+        $user = $request->user();
+        $user->avatar = $avatarFileName;
+        $user->save();
+
+        return back();
+    }
+
+    public function addTelegramToken(Request $request)
+    {
+        $validator = $request->validate([
+            'token' => 'required'
+        ]);
+
+        // Get telegram user id
+        $user_id = Str::before($request->token, ':');
+
+        $user = $request->user();
+
+        // Remove telegram token if exists
+        $user->tokens()->where('name', 'tg-token')->delete();
+
+        // Add new token
+        if (!$user->addToken($request->token, 'tg-token')) {
+            return back()->withErrors(['token' => 'Токен уже используется']);
+        }
+        $user->tg_user_id = $user_id;
+        $user->save();
+
+        return back();
+    }
+
+    public function revokeTelegramToken(Request $request)
+    {
+        $user = $request->user();
+        $user->tokens()->where('name', 'tg-token')->delete();
+        $user->tg_user_id = null;
+        $user->save();
+        return back();
     }
 }

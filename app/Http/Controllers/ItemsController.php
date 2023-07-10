@@ -33,6 +33,10 @@ class ItemsController extends Controller
         ]);
     }
 
+    public function show(Request $request) {
+        return Item::where('user_id', $request->user()->id)->get();
+    }
+
     /**
      * Save a new item.
      */

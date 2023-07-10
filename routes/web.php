@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ItemsController;
 use App\Http\Controllers\UserController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,10 +16,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Main page
-Route::middleware('auth:sanctum')->get('/', [ItemsController::class, 'index']);
-
-
 
 Route::get('/login', function () {
     return view('login');
@@ -26,21 +23,35 @@ Route::get('/login', function () {
 
 Route::post('/login', [UserController::class, 'login']);
 
+
 Route::get('/register', function () {
     return view('register');
 });
 
 Route::post('/register', [UserController::class, 'register']);
 
+
 Route::get('/logout', [UserController::class, 'logout']);
 
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    // Add an item
-    Route::post('/items/add', [ItemsController::class, 'store']);
+    // Main page
+    Route::get('/', [ItemsController::class, 'index']);
 
-    // Edit an item
-    Route::post('/items/edit', [ItemsController::class, 'update']);
+    // User profile page
+    Route::get('/profile', function (Request $request) {
+        return view('profile', ['user' => $request->user()]);
+    });
 
-    // Remove an item
-    Route::post('/items/remove', [ItemsController::class, 'destroy']);
+    // Update avatar
+    Route::post('/profile/avatar', [UserController::class, 'storeAvatar']);
+
+    // Add bot token
+    Route::post('/profile/addtgtoken', [UserController::class, 'addTelegramToken']);
+
+    // Remove bot token
+    Route::get('/profile/revoketgtoken', [UserController::class, 'revokeTelegramToken']);
+    Route::get('/profile/tokens', function (Request $request) {
+        dd($request->user()->tokens()->where('name', 'tg-token')->get()->isNotEmpty());
+    });
 });

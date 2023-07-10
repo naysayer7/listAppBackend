@@ -13,11 +13,22 @@
 
 <body>
     <header>
+        <nav class="p-2">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <img src="{{ Auth::user()->avatar ? '/images/' . Auth::user()->avatar : '' }}" width="40px" height="40px">
+                {{ Auth::user()->email }}
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="/profile">Профиль</a></li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="/logout">Выйти</a></li>
+            </ul>
+        </nav>
     </header>
     <main class="p-2">
-        <div class="text-end">
-            <a class="btn btn-outline-secondary logout-btn" href="/logout">Выйти</a>
-        </div>
         <form class="sort-form">
             <div class="form-check">
                 <input class="form-check-input" type="radio" name="sortRadio" id="idSortRadio" sort-field="id"

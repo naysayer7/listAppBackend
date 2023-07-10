@@ -13,7 +13,7 @@ textForm.addEventListener("submit", function (e) {
   // Очищаем поле ввода
   textInput.value = "";
 
-  post("/items/add", { body: inputValue }).then(function (res) {
+  post("/api/items/add", { body: inputValue }).then(function (res) {
     return res.json();
   }).then(function (data) {
     if (!data.errors) {
@@ -79,7 +79,7 @@ function onConfirmClick(target, e) {
   const editInput = editForm.querySelector("input");
   const editValue = editInput.value.trim();
 
-  post("/items/edit", { id: elementNode.id, newBody: editInput.value }).then(function (res) {
+  post("/api/items/edit", { id: elementNode.id, newBody: editInput.value }).then(function (res) {
     return res.json();
   }).then(function (data) {
     if (!data.errors || data.errors.id) {
@@ -110,7 +110,7 @@ function onCancelClick(target, e) {
 
 function onRemoveClick(target, e) {
   const elementNode = target.closest("li");
-  post("/items/remove", { id: elementNode.id }).then(function () {
+  post("/api/items/remove", { id: elementNode.id }).then(function () {
     window.location.reload();
   });
 }
